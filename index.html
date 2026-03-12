@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>My Movies Website</title>
+
+<style>
+
+body{
+font-family:Arial;
+background:#111;
+color:white;
+text-align:center;
+margin:0;
+}
+
+header{
+background:red;
+padding:15px;
+font-size:25px;
+}
+
+.search-box{
+margin:15px;
+}
+
+input{
+padding:10px;
+border-radius:5px;
+border:none;
+}
+
+button{
+padding:10px;
+border:none;
+border-radius:5px;
+cursor:pointer;
+margin:5px;
+background:red;
+color:white;
+}
+
+button:hover{
+background:darkred;
+}
+
+/* slider */
+
+.slider{
+width:80%;
+height:300px;
+overflow:hidden;
+margin:auto;
+border-radius:10px;
+}
+
+.slider-track{
+display:flex;
+height:100%;
+transition:transform 1s ease;
+}
+
+.slide{
+min-width:100%;
+height:100%;
+position:relative;
+}
+
+.slide img{
+width:100%;
+height:100%;
+object-fit:cover;
+}
+
+.slide-title{
+position:absolute;
+bottom:20px;
+width:100%;
+font-size:24px;
+background:rgba(0,0,0,0.5);
+padding:10px;
+}
+
+/* movies */
+
+.movie{
+background:#222;
+margin:15px;
+padding:10px;
+border-radius:10px;
+display:inline-block;
+width:180px;
+}
+
+.movie img{
+width:100%;
+border-radius:8px;
+}
+
+</style>
+</head>
+
+<body>
+
+<header>My Movies Website</header>
+
+<div class="search-box">
+<input type="text" id="search" placeholder="Search Movies..." onkeyup="searchMovie()">
+</div>
+
+<div class="slider">
+<div class="slider-track" id="slider"></div>
+</div>
+
+<h2>All Movies</h2>
+
+<div id="movies-list"></div>
+
+<script>
+
+let movies=[
+
+{
+title:"KGF Chapter 2",
+img:"https://upload.wikimedia.org/wikipedia/en/d/d7/K.G.F_Chapter_2.jpg",
+watch:"https://example.com/watch1",
+download:"https://example.com/download1"
+},
+
+{
+title:"Pushpa",
+img:"https://upload.wikimedia.org/wikipedia/en/5/5d/Pushpa_-_The_Rise.jpg",
+watch:"https://example.com/watch2",
+download:"https://example.com/download2"
+},
+
+{
+title:"RRR",
+img:"https://upload.wikimedia.org/wikipedia/en/d/d7/RRR_Poster.jpg",
+watch:"https://example.com/watch3",
+download:"https://example.com/download3"
+}
+
+];
+
+function renderMovies(){
+
+let list=document.getElementById("movies-list");
+
+list.innerHTML="";
+
+movies.forEach(m=>{
+
+let div=document.createElement("div");
+
+div.className="movie";
+
+div.innerHTML=`
+
+<img src="${m.img}">
+
+<h3 class="title">${m.title}</h3>
+
+<button onclick="watchMovie('${m.watch}')">Watch</button>
+
+<button onclick="downloadMovie('${m.download}')">Download</button>
+
+`;
+
+list.appendChild(div);
+
+});
+
+renderSlider();
+
+}
+
+function watchMovie(link){
+window.open(link,"_blank");
+}
+
+function downloadMovie(link){
+window.open(link,"_blank");
+}
+
+let slideInterval;
+
+function renderSlider(){
+
+clearInterval(slideInterval);
+
+let slider=document.getElementById("slider");
+
+slider.innerHTML="";
+
+let latest=movies.slice(-3);
+
+latest.forEach(m=>{
+
+let div=document.createElement("div");
+
+div.className="slide";
+
+div.innerHTML=`
+
+<img src="${m.img}">
+<div class="slide-title">${m.title}</div>
+
+`;
+
+slider.appendChild(div);
+
+});
+
+let index=0;
+
+slideInterval=setInterval(()=>{
+
+index++;
+
+if(index>=latest.length){index=0;}
+
+slider.style.transform=`translateX(-${index*100}%)`;
+
+},4000);
+
+}
+
+function searchMovie(){
+
+let input=document.getElementById("search").value.toLowerCase();
+
+let moviesDiv=document.querySelectorAll(".movie");
+
+moviesDiv.forEach(movie=>{
+
+let title=movie.querySelector(".title").innerText.toLowerCase();
+
+movie.style.display = title.includes(input) ? "inline-block":"none";
+
+});
+
+}
+
+renderMovies();
+
+</script>
+
+</body>
+</html>

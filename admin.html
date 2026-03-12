@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Movie Admin Panel</title>
+
+<style>
+
+body{
+font-family:Arial;
+background:#111;
+color:white;
+text-align:center;
+margin:0;
+}
+
+header{
+background:red;
+padding:15px;
+font-size:25px;
+}
+
+.admin{
+background:#222;
+margin:20px auto;
+padding:20px;
+border-radius:10px;
+width:90%;
+max-width:500px;
+}
+
+input{
+width:90%;
+padding:10px;
+margin:5px;
+border:none;
+border-radius:5px;
+}
+
+button{
+padding:10px;
+margin:5px;
+border:none;
+border-radius:5px;
+background:red;
+color:white;
+cursor:pointer;
+}
+
+button:hover{
+background:darkred;
+}
+
+.movie-list{
+margin-top:20px;
+}
+
+.movie-item{
+background:#333;
+padding:10px;
+margin:5px;
+border-radius:5px;
+}
+
+</style>
+</head>
+
+<body>
+
+<header>Movie Admin Panel</header>
+
+<div class="admin">
+
+<h2>Add Movie</h2>
+
+<input id="name" placeholder="Movie Name"><br>
+
+<input id="img" placeholder="Image URL"><br>
+
+<input id="watch" placeholder="Watch Link"><br>
+
+<input id="download" placeholder="Download Link"><br>
+
+<button onclick="addMovie()">Add Movie</button>
+
+<div class="movie-list" id="list"></div>
+
+</div>
+
+<script>
+
+let movies = JSON.parse(localStorage.getItem("movies")) || [];
+
+function save(){
+localStorage.setItem("movies",JSON.stringify(movies));
+}
+
+function render(){
+
+let list=document.getElementById("list");
+list.innerHTML="";
+
+movies.forEach((m,i)=>{
+
+let div=document.createElement("div");
+
+div.className="movie-item";
+
+div.innerHTML=`
+<b>${m.title}</b><br>
+<button onclick="removeMovie(${i})">Remove</button>
+`;
+
+list.appendChild(div);
+
+});
+
+}
+
+function addMovie(){
+
+let name=document.getElementById("name").value;
+let img=document.getElementById("img").value;
+let watch=document.getElementById("watch").value;
+let download=document.getElementById("download").value;
+
+if(name && img){
+
+movies.push({
+title:name,
+img:img,
+watch:watch,
+download:download
+});
+
+save();
+render();
+
+document.getElementById("name").value="";
+document.getElementById("img").value="";
+document.getElementById("watch").value="";
+document.getElementById("download").value="";
+
+}
+
+}
+
+function removeMovie(i){
+
+movies.splice(i,1);
+save();
+render();
+
+}
+
+render();
+
+</script>
+
+</body>
+</html>
