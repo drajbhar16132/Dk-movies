@@ -1,249 +1,158 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-<title>My Movies Website</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DK MOVIE - Home</title>
+    <style>
+        /* बेसिक स्टाइल और कलर्स */
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body { 
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
+            background-color: #0f171e; 
+            color: white; 
+        }
 
-<style>
+        /* Header Style */
+        header {
+            background-color: #1a242f;
+            padding: 10px 5%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.5);
+        }
 
-body{
-font-family:Arial;
-background:#111;
-color:white;
-text-align:center;
-margin:0;
-}
+        .logo-container img { 
+            height: 60px; 
+            width: auto; 
+            display: block; 
+        }
 
-header{
-background:red;
-padding:15px;
-font-size:25px;
-}
+        /* Navigation Menu */
+        nav ul { 
+            display: flex; 
+            list-style: none; 
+            gap: 20px; 
+        }
+        nav ul li a { 
+            color: #ccc; 
+            text-decoration: none; 
+            font-weight: bold; 
+            font-size: 1rem;
+            transition: 0.3s;
+        }
+        nav ul li a:hover { 
+            color: #1a98ff; 
+        }
 
-.search-box{
-margin:15px;
-}
+        /* Controls: Search and Filters */
+        .controls { 
+            padding: 30px 5%; 
+            text-align: center; 
+        }
+        .search-input {
+            padding: 12px 20px;
+            width: 100%;
+            max-width: 500px;
+            border-radius: 25px;
+            border: 2px solid #1a242f;
+            background: #2a343f;
+            color: white;
+            margin-bottom: 20px;
+            outline: none;
+            font-size: 1rem;
+        }
 
-input{
-padding:10px;
-border-radius:5px;
-border:none;
-}
+        .filter-buttons { 
+            display: flex; 
+            justify-content: center; 
+            gap: 10px; 
+            flex-wrap: wrap; 
+        }
+        .btn {
+            padding: 10px 25px;
+            border: 1px solid #1a98ff;
+            border-radius: 20px;
+            background: transparent;
+            color: white;
+            cursor: pointer;
+            transition: 0.3s;
+            font-weight: 600;
+        }
+        .btn:hover, .btn.active { 
+            background: #1a98ff; 
+            color: #fff; 
+        }
 
-button{
-padding:10px;
-border:none;
-border-radius:5px;
-cursor:pointer;
-margin:5px;
-background:red;
-color:white;
-}
+        /* Movie Grid Section */
+        .container { 
+            padding: 0 5% 50px 5%; 
+        }
+        .movie-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+            gap: 25px;
+        }
 
-button:hover{
-background:darkred;
-}
+        /* Message for empty database */
+        .empty-message {
+            text-align: center;
+            grid-column: 1 / -1;
+            padding: 100px 20px;
+            color: #666;
+            font-size: 1.2rem;
+        }
 
-/* slider */
-
-.slider{
-width:80%;
-height:300px;
-overflow:hidden;
-margin:auto;
-border-radius:10px;
-}
-
-.slider-track{
-display:flex;
-height:100%;
-transition:transform 1s ease;
-}
-
-.slide{
-min-width:100%;
-height:100%;
-position:relative;
-}
-
-.slide img{
-width:100%;
-height:100%;
-object-fit:cover;
-}
-
-.slide-title{
-position:absolute;
-bottom:20px;
-width:100%;
-font-size:24px;
-background:rgba(0,0,0,0.5);
-padding:10px;
-}
-
-/* movies */
-
-.movie{
-background:#222;
-margin:15px;
-padding:10px;
-border-radius:10px;
-display:inline-block;
-width:180px;
-}
-
-.movie img{
-width:100%;
-border-radius:8px;
-}
-
-</style>
+        /* Mobile Adjustments */
+        @media (max-width: 768px) {
+            header { 
+                flex-direction: column; 
+                gap: 10px; 
+                padding: 15px;
+            }
+            .logo-container img { height: 50px; }
+            .movie-grid { 
+                grid-template-columns: repeat(2, 1fr); 
+                gap: 15px; 
+            }
+        }
+    </style>
 </head>
-
 <body>
 
-<header>My Movies Website</header>
+<header>
+    <div class="logo-container">
+        <a href="#"><img src="logo.png" alt="DK MOVIE Logo"></a>
+    </div>
+    <nav>
+        <ul>
+            <li><a href="#">Home</a></li>
+            <li><a href="#">Movies</a></li>
+            <li><a href="#">Web Series</a></li>
+        </ul>
+    </nav>
+</header>
 
-<div class="search-box">
-<input type="text" id="search" placeholder="Search Movies..." onkeyup="searchMovie()">
+<div class="controls">
+    <input type="text" id="movieSearch" class="search-input" placeholder="Search for movies...">
+    
+    <div class="filter-buttons">
+        <button class="btn active">All</button>
+        <button class="btn">Bollywood</button>
+        <button class="btn">Hollywood</button>
+        <button class="btn">South</button>
+    </div>
 </div>
 
-<div class="slider">
-<div class="slider-track" id="slider"></div>
+<div class="container">
+    <div class="movie-grid" id="movieGrid">
+        <div class="empty-message">No movies available yet. Please add from the admin panel.</div>
+    </div>
 </div>
-
-<h2>All Movies</h2>
-
-<div id="movies-list"></div>
-
-<script>
-
-let movies=[
-
-{
-title:"KGF Chapter 2",
-img:"https://upload.wikimedia.org/wikipedia/en/d/d7/K.G.F_Chapter_2.jpg",
-watch:"https://example.com/watch1",
-download:"https://example.com/download1"
-},
-
-{
-title:"Pushpa",
-img:"https://upload.wikimedia.org/wikipedia/en/5/5d/Pushpa_-_The_Rise.jpg",
-watch:"https://example.com/watch2",
-download:"https://example.com/download2"
-},
-
-{
-title:"RRR",
-img:"https://upload.wikimedia.org/wikipedia/en/d/d7/RRR_Poster.jpg",
-watch:"https://example.com/watch3",
-download:"https://example.com/download3"
-}
-
-];
-
-function renderMovies(){
-
-let list=document.getElementById("movies-list");
-
-list.innerHTML="";
-
-movies.forEach(m=>{
-
-let div=document.createElement("div");
-
-div.className="movie";
-
-div.innerHTML=`
-
-<img src="${m.img}">
-
-<h3 class="title">${m.title}</h3>
-
-<button onclick="watchMovie('${m.watch}')">Watch</button>
-
-<button onclick="downloadMovie('${m.download}')">Download</button>
-
-`;
-
-list.appendChild(div);
-
-});
-
-renderSlider();
-
-}
-
-function watchMovie(link){
-window.open(link,"_blank");
-}
-
-function downloadMovie(link){
-window.open(link,"_blank");
-}
-
-let slideInterval;
-
-function renderSlider(){
-
-clearInterval(slideInterval);
-
-let slider=document.getElementById("slider");
-
-slider.innerHTML="";
-
-let latest=movies.slice(-3);
-
-latest.forEach(m=>{
-
-let div=document.createElement("div");
-
-div.className="slide";
-
-div.innerHTML=`
-
-<img src="${m.img}">
-<div class="slide-title">${m.title}</div>
-
-`;
-
-slider.appendChild(div);
-
-});
-
-let index=0;
-
-slideInterval=setInterval(()=>{
-
-index++;
-
-if(index>=latest.length){index=0;}
-
-slider.style.transform=`translateX(-${index*100}%)`;
-
-},4000);
-
-}
-
-function searchMovie(){
-
-let input=document.getElementById("search").value.toLowerCase();
-
-let moviesDiv=document.querySelectorAll(".movie");
-
-moviesDiv.forEach(movie=>{
-
-let title=movie.querySelector(".title").innerText.toLowerCase();
-
-movie.style.display = title.includes(input) ? "inline-block":"none";
-
-});
-
-}
-
-renderMovies();
-
-</script>
 
 </body>
 </html>
