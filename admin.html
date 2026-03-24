@@ -1,159 +1,199 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-<title>Movie Admin Panel</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DK MOVIE - Pro Admin Panel</title>
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body { font-family: 'Segoe UI', sans-serif; background-color: #0f171e; color: white; padding: 20px; }
 
-<style>
+        .admin-container {
+            max-width: 900px;
+            margin: 20px auto;
+            background: #1a242f;
+            padding: 25px;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+        }
 
-body{
-font-family:Arial;
-background:#111;
-color:white;
-text-align:center;
-margin:0;
-}
+        h2 { text-align: center; margin-bottom: 20px; color: #1a98ff; text-transform: uppercase; letter-spacing: 2px; }
 
-header{
-background:red;
-padding:15px;
-font-size:25px;
-}
+        /* Form Styling */
+        .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 20px; }
+        .form-group { margin-bottom: 10px; }
+        label { display: block; margin-bottom: 5px; font-size: 0.9rem; color: #aaa; }
+        input, select {
+            width: 100%; padding: 12px; border-radius: 8px;
+            border: 1px solid #2a343f; background: #0f171e; color: white; outline: none;
+        }
 
-.admin{
-background:#222;
-margin:20px auto;
-padding:20px;
-border-radius:10px;
-width:90%;
-max-width:500px;
-}
+        /* Buttons */
+        .btn-row { display: flex; gap: 10px; margin-bottom: 30px; }
+        .add-btn { flex: 2; padding: 15px; background: #1a98ff; color: white; border: none; border-radius: 8px; font-weight: bold; cursor: pointer; }
+        .update-btn { flex: 2; padding: 15px; background: #f39c12; color: white; border: none; border-radius: 8px; font-weight: bold; cursor: pointer; display: none; }
+        .clear-btn { flex: 1; padding: 15px; background: #34495e; color: white; border: none; border-radius: 8px; cursor: pointer; }
 
-input{
-width:90%;
-padding:10px;
-margin:5px;
-border:none;
-border-radius:5px;
-}
+        /* Management Table */
+        .table-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; }
+        .search-admin { padding: 8px 15px; border-radius: 20px; border: 1px solid #333; background: #0f171e; color: white; width: 250px; }
 
-button{
-padding:10px;
-margin:5px;
-border:none;
-border-radius:5px;
-background:red;
-color:white;
-cursor:pointer;
-}
+        table { width: 100%; border-collapse: collapse; background: #141d26; border-radius: 10px; overflow: hidden; }
+        th, td { padding: 12px; text-align: left; border-bottom: 1px solid #2a343f; }
+        th { background: #222e3a; color: #1a98ff; }
+        
+        .edit-btn { background: #2ecc71; color: white; border: none; padding: 5px 10px; border-radius: 4px; cursor: pointer; margin-right: 5px; }
+        .delete-btn { background: #e74c3c; color: white; border: none; padding: 5px 10px; border-radius: 4px; cursor: pointer; }
 
-button:hover{
-background:darkred;
-}
+        .nav-link { display: block; text-align: center; margin-top: 25px; color: #1a98ff; text-decoration: none; font-weight: bold; }
 
-.movie-list{
-margin-top:20px;
-}
-
-.movie-item{
-background:#333;
-padding:10px;
-margin:5px;
-border-radius:5px;
-}
-
-</style>
+        @media (max-width: 600px) { .form-grid { grid-template-columns: 1fr; } .table-header { flex-direction: column; gap: 10px; } }
+    </style>
 </head>
-
 <body>
 
-<header>Movie Admin Panel</header>
+<div class="admin-container">
+    <h2>DK Movie Admin</h2>
+    
+    <div class="form-grid">
+        <input type="hidden" id="editIndex">
+        <div class="form-group">
+            <label>Movie Title</label>
+            <input type="text" id="movieTitle" placeholder="Enter movie name">
+        </div>
+        <div class="form-group">
+            <label>Category</label>
+            <select id="movieCat">
+                <option value="bollywood">Bollywood</option>
+                <option value="hollywood">Hollywood</option>
+                <option value="south">South Indian</option>
+            </select>
+        </div>
+        <div class="form-group" style="grid-column: span 2;">
+            <label>Image URL (Poster Link)</label>
+            <input type="text" id="movieImg" placeholder="https://link-to-image.jpg">
+        </div>
+    </div>
 
-<div class="admin">
+    <div class="btn-row">
+        <button id="addBtn" class="add-btn" onclick="addMovie()">ADD MOVIE</button>
+        <button id="updateBtn" class="update-btn" onclick="saveEdit()">UPDATE MOVIE</button>
+        <button class="clear-btn" onclick="clearForm()">RESET</button>
+    </div>
 
-<h2>Add Movie</h2>
+    <div class="manage-section">
+        <div class="table-header">
+            <h3>Movie Database</h3>
+            <input type="text" id="adminSearch" class="search-admin" placeholder="Filter list..." onkeyup="loadMovies()">
+        </div>
+        
+        <table>
+            <thead>
+                <tr>
+                    <th>Poster</th>
+                    <th>Title</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody id="movieTableBody"></tbody>
+        </table>
+    </div>
 
-<input id="name" placeholder="Movie Name"><br>
-
-<input id="img" placeholder="Image URL"><br>
-
-<input id="watch" placeholder="Watch Link"><br>
-
-<input id="download" placeholder="Download Link"><br>
-
-<button onclick="addMovie()">Add Movie</button>
-
-<div class="movie-list" id="list"></div>
-
+    <a href="index.html" class="nav-link">VIEW LIVE WEBSITE</a>
 </div>
 
 <script>
+    // 1. Movies Load Karein
+    function loadMovies() {
+        const tableBody = document.getElementById('movieTableBody');
+        const searchTerm = document.getElementById('adminSearch').value.toLowerCase();
+        let movies = JSON.parse(localStorage.getItem('myMovies')) || [];
+        
+        tableBody.innerHTML = "";
 
-let movies = JSON.parse(localStorage.getItem("movies")) || [];
+        movies.forEach((movie, index) => {
+            if(movie.title.toLowerCase().includes(searchTerm)) {
+                tableBody.innerHTML += `
+                    <tr>
+                        <td><img src="${movie.img}" width="40" height="60" style="object-fit:cover; border-radius:4px;"></td>
+                        <td>${movie.title} <br><small style="color:#666">${movie.category}</small></td>
+                        <td>
+                            <button class="edit-btn" onclick="startEdit(${index})">Edit</button>
+                            <button class="delete-btn" onclick="deleteMovie(${index})">Del</button>
+                        </td>
+                    </tr>
+                `;
+            }
+        });
+    }
 
-function save(){
-localStorage.setItem("movies",JSON.stringify(movies));
-}
+    // 2. Add Movie
+    function addMovie() {
+        const title = document.getElementById('movieTitle').value;
+        const img = document.getElementById('movieImg').value;
+        const cat = document.getElementById('movieCat').value;
 
-function render(){
+        if(!title || !img) { alert("Please fill all fields!"); return; }
 
-let list=document.getElementById("list");
-list.innerHTML="";
+        let movies = JSON.parse(localStorage.getItem('myMovies')) || [];
+        movies.push({ title, img, category: cat });
+        localStorage.setItem('myMovies', JSON.stringify(movies));
 
-movies.forEach((m,i)=>{
+        clearForm();
+        loadMovies();
+    }
 
-let div=document.createElement("div");
+    // 3. Edit Start Karein
+    function startEdit(index) {
+        let movies = JSON.parse(localStorage.getItem('myMovies')) || [];
+        const movie = movies[index];
 
-div.className="movie-item";
+        document.getElementById('movieTitle').value = movie.title;
+        document.getElementById('movieImg').value = movie.img;
+        document.getElementById('movieCat').value = movie.category;
+        document.getElementById('editIndex').value = index;
 
-div.innerHTML=`
-<b>${m.title}</b><br>
-<button onclick="removeMovie(${i})">Remove</button>
-`;
+        document.getElementById('addBtn').style.display = "none";
+        document.getElementById('updateBtn').style.display = "block";
+        window.scrollTo(0,0);
+    }
 
-list.appendChild(div);
+    // 4. Edit Save Karein
+    function saveEdit() {
+        const index = document.getElementById('editIndex').value;
+        let movies = JSON.parse(localStorage.getItem('myMovies')) || [];
 
-});
+        movies[index] = {
+            title: document.getElementById('movieTitle').value,
+            img: document.getElementById('movieImg').value,
+            category: document.getElementById('movieCat').value
+        };
 
-}
+        localStorage.setItem('myMovies', JSON.stringify(movies));
+        clearForm();
+        loadMovies();
+    }
 
-function addMovie(){
+    // 5. Delete Movie
+    function deleteMovie(index) {
+        if(confirm("Delete this movie?")) {
+            let movies = JSON.parse(localStorage.getItem('myMovies')) || [];
+            movies.splice(index, 1);
+            localStorage.setItem('myMovies', JSON.stringify(movies));
+            loadMovies();
+        }
+    }
 
-let name=document.getElementById("name").value;
-let img=document.getElementById("img").value;
-let watch=document.getElementById("watch").value;
-let download=document.getElementById("download").value;
+    // 6. Form Reset
+    function clearForm() {
+        document.getElementById('movieTitle').value = "";
+        document.getElementById('movieImg').value = "";
+        document.getElementById('editIndex').value = "";
+        document.getElementById('addBtn').style.display = "block";
+        document.getElementById('updateBtn').style.display = "none";
+    }
 
-if(name && img){
-
-movies.push({
-title:name,
-img:img,
-watch:watch,
-download:download
-});
-
-save();
-render();
-
-document.getElementById("name").value="";
-document.getElementById("img").value="";
-document.getElementById("watch").value="";
-document.getElementById("download").value="";
-
-}
-
-}
-
-function removeMovie(i){
-
-movies.splice(i,1);
-save();
-render();
-
-}
-
-render();
-
+    window.onload = loadMovies;
 </script>
 
 </body>
